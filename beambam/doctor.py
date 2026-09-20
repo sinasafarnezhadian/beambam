@@ -61,11 +61,30 @@ HMS_DESCRIPTIONS: dict[str, str] = {
     "1000_C001_0000_0000": "Bed temperature higher than filament max — risk of clog",
     "0300_0100_0001_0009": "Z-axis homing failed — check limit switch",
     "0300_0200_0002_0001": "X-axis stall detected — belt tension or bearing",
+    "0501_0400_0003_0002": "Please lubricate the Z-axis lead screw",
 }
 
 
+def _normalize_hms_code(code: str) -> str:
+    """HMS_DESCRIPTIONS is keyed by the 4x4-hex-digit form
+    ("AAAA_BBBB_CCCC_DDDD"), which is what newer firmware's a/b/c/d
+    fields produce directly. Older firmware instead reports `attr`
+    and `code` as two decimal 32-bit integers ("83952640_196610") —
+    same bits, different textual form. Convert the decimal form to
+    the canonical hex form so both firmware generations hit the same
+    catalog entries."""
+    parts = code.split("_")
+    if len(parts) != 2 or not all(p.isdigit() for p in parts):
+        return code
+    attr, val = (int(p) for p in parts)
+    attr_hex, val_hex = f"{attr:08X}", f"{val:08X}"
+    return f"{attr_hex[:4]}_{attr_hex[4:]}_{val_hex[:4]}_{val_hex[4:]}"
+
+
 def decode_hms(code: str) -> str:
-    return HMS_DESCRIPTIONS.get(code, f"unknown HMS code (look up: {code})")
+    normalized = _normalize_hms_code(code)
+    return HMS_DESCRIPTIONS.get(
+        normalized, f"unknown HMS code (look up: {code})")
 
 
 # ----- check producers ----------------------------------------------------

@@ -109,7 +109,10 @@ Termux can't run Claude Desktop directly. Two patterns work:
    invocation as args. See §4 for an example block.
 2. **Local API surface** — Run `x2d_bridge.py daemon --http 0.0.0.0:8765 --auth-token …`
    and have any MCP client on the same network point at that HTTP API
-   directly via `X2D_DAEMON_HTTP`.
+   directly via `X2D_DAEMON_HTTP`. Since `--auth-token` gates every
+   route on a non-loopback bind, also set `X2D_DAEMON_TOKEN` to the
+   same value in the MCP client's env — otherwise `camera_snapshot`
+   / `healthz` / `metrics` come back `401`.
 
 ### 3.2 Desktop Linux
 

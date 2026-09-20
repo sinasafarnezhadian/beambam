@@ -5,7 +5,9 @@
       "args": ["-m", "mcp_x2d"],
       "cwd": "/absolute/path/to/x2d",
       "env": {
-        "PYTHONPATH": "/absolute/path/to/x2d"
+        "PYTHONPATH": "/absolute/path/to/x2d",
+        "X2D_DAEMON_HTTP": "http://<daemon-lan-ip>:8765",
+        "X2D_DAEMON_TOKEN": "<same value as X2D_AUTH_TOKEN on the daemon>"
       }
     }
   }
